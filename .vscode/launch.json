@@ -2,21 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "BC",
+            "name": "W1",
             "request": "launch",
             "type": "al",
-            "environmentType": "OnPrem",
-            "server": "http://BC",
-            "serverInstance": "BC",
-            "authentication": "UserPassword",
-            "startupObjectId": 22,
+            "environmentType": "Sandbox",
+            "environmentName": "W1",
+            "startupObjectId": 146,
             "startupObjectType": "Page",
             "breakOnError": "All",
             "launchBrowser": true,
+            "tenant": "da5f5850-5e70-4458-a695-cd9bee0d3bea",
             "enableLongRunningSqlStatements": true,
             "enableSqlInformationDebugger": true,
-            "tenant": "default",
-            "usePublicURLFromServer": true,
             "schemaUpdateMode": "ForceSync"
         }
     ]

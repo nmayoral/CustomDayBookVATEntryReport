@@ -1,7 +1,7 @@
 report 50000 NMCustomDayBookVATEntry
 {
     DefaultLayout = RDLC;
-    RDLCLayout = './NMCustomDayBookVATEntry.rdlc';
+    RDLCLayout = './03_Reports/NMCustomDayBookVATEntry.rdlc';
     ApplicationArea = All;
     Caption = 'Custom Day Book VAT Entry';
     UsageCategory = ReportsAndAnalysis;
@@ -254,9 +254,84 @@ report 50000 NMCustomDayBookVATEntry
                     column(VAT_Entry_Type; Type)
                     {
                     }
-
+                    //NM - CUSTOMIZATION BEGINS
+                    column(NMCountPurchNormVATBase; NMCountPurchNormVATBase)
+                    {
+                    }
+                    column(NMCountPurchNormVATAmount; NMCountPurchNormVATAmount)
+                    {
+                    }
+                    column(NMCountPurchNormNonDeductibleVATBase; NMCountPurchNormNonDeductibleVATBase)
+                    {
+                    }
+                    column(NMCountPurchNormNonDeductibleVATAmount; NMCountPurchNormNonDeductibleVATAmount)
+                    {
+                    }
+                    column(NMCountSaleNormVATBase; NMCountSaleNormVATBase)
+                    {
+                    }
+                    column(NMCountSaleNormVATAmount; NMCountSaleNormVATAmount)
+                    {
+                    }
+                    column(NMCountSaleNormNonDeductibleVATBase; NMCountSaleNormNonDeductibleVATBase)
+                    {
+                    }
+                    column(NMCountSaleNormNonDeductibleVATAmount; NMCountSaleNormNonDeductibleVATAmount)
+                    {
+                    }
+                    column(NMCountPurchRevVATBase; NMCountPurchRevVATBase)
+                    {
+                    }
+                    column(NMCountPurchRevVATAmount; NMCountPurchRevVATAmount)
+                    {
+                    }
+                    column(NMCountPurchRevNonDeductibleVATBase; NMCountPurchRevNonDeductibleVATBase)
+                    {
+                    }
+                    column(NMCountPurchRevNonDeductibleVATAmount; NMCountPurchRevNonDeductibleVATAmount)
+                    {
+                    }
+                    column(NMCountSaleRevVATBase; NMCountSaleRevVATBase)
+                    {
+                    }
+                    column(NMCountSaleRevVATAmount; NMCountSaleRevVATAmount)
+                    {
+                    }
+                    column(NMCountSaleRevNonDeductibleVATBase; NMCountSaleRevNonDeductibleVATBase)
+                    {
+                    }
+                    column(NMCountSaleRevNonDeductibleVATAmount; NMCountSaleRevNonDeductibleVATAmount)
+                    {
+                    }
+                    //NM - CUSTOMIZATION ENDS
                     trigger OnAfterGetRecord()
                     begin
+                        //NM - CUSTOMIZATION BEGINS
+                        if ("Type" = "Type"::Purchase) and ("VAT Calculation Type" = "VAT Calculation Type"::"Normal VAT") then begin
+                            NMCountPurchNormVATBase += Base;
+                            NMCountPurchNormVATAmount += Amount;
+                            NMCountPurchNormNonDeductibleVATBase += "Non-Deductible VAT Base";
+                            NMCountPurchNormNonDeductibleVATAmount += "Non-Deductible VAT Amount";
+                        end;
+                        if ("Type" = "Type"::Sale) and ("VAT Calculation Type" = "VAT Calculation Type"::"Normal VAT") then begin
+                            NMCountSaleNormVATBase += Base;
+                            NMCountSaleNormVATAmount += Amount;
+                            NMCountSaleNormNonDeductibleVATBase += "Non-Deductible VAT Base";
+                            NMCountSaleNormNonDeductibleVATAmount += "Non-Deductible VAT Amount";
+                        end;
+                        if ("Type" = "Type"::Purchase) and ("VAT Calculation Type" = "VAT Calculation Type"::"Reverse Charge VAT") then begin
+                            NMCountPurchRevVATBase += Base;
+                            NMCountPurchRevVATAmount += Amount;
+                            NMCountPurchRevNonDeductibleVATBase += "Non-Deductible VAT Base";
+                            NMCountPurchRevNonDeductibleVATAmount += "Non-Deductible VAT Amount";
+                        end;
+                        if ("Type" = "Type"::Sale) and ("VAT Calculation Type" = "VAT Calculation Type"::"Reverse Charge VAT") then begin
+                            NMCountSaleRevVATBase += Base;
+                            NMCountSaleRevVATAmount += Amount;
+                            NMCountSaleRevNonDeductibleVATBase += "Non-Deductible VAT Base";
+                            NMCountSaleRevNonDeductibleVATAmount += "Non-Deductible VAT Amount";
+                        end;
+                        //NM - CUSTOMIZATION ENDS
                         case Type of
                             Type::Purchase:
                                 if ("Bill-to/Pay-to No." <> Vendor."No.") or (Type <> PrevType) then
@@ -264,6 +339,7 @@ report 50000 NMCustomDayBookVATEntry
                                         SellToBuyFromName := Vendor.Name
                                     else
                                         SellToBuyFromName := '';
+
                             Type::Sale:
                                 if ("Bill-to/Pay-to No." <> Customer."No.") or (Type <> PrevType) then
                                     if Customer.Get("Bill-to/Pay-to No.") then
@@ -312,6 +388,24 @@ report 50000 NMCustomDayBookVATEntry
             trigger OnPreDataItem()
             begin
                 ReqVATEntry.CopyFilter("VAT Reporting Date", "Period Start");
+                //NM - CUSTOMIZATION BEGINS
+                NMCountPurchNormVATBase := 0;
+                NMCountPurchNormVATAmount := 0;
+                NMCountPurchNormNonDeductibleVATBase := 0;
+                NMCountPurchNormNonDeductibleVATAmount := 0;
+                NMCountSaleNormVATBase := 0;
+                NMCountSaleNormVATAmount := 0;
+                NMCountSaleNormNonDeductibleVATBase := 0;
+                NMCountSaleNormNonDeductibleVATAmount := 0;
+                NMCountPurchRevVATBase := 0;
+                NMCountPurchRevVATAmount := 0;
+                NMCountPurchRevNonDeductibleVATBase := 0;
+                NMCountPurchRevNonDeductibleVATAmount := 0;
+                NMCountSaleRevVATBase := 0;
+                NMCountSaleRevVATAmount := 0;
+                NMCountSaleRevNonDeductibleVATBase := 0;
+                NMCountSaleRevNonDeductibleVATAmount := 0;
+                //NM - CUSTOMIZATION ENDS
             end;
         }
     }
@@ -372,6 +466,22 @@ report 50000 NMCustomDayBookVATEntry
         Sell_to__Buy_from_No_CaptionLbl: Label 'Sell-to/\Buy-from No.';
         MaxPostingDateErr: Label 'VAT Date period must not be longer than 1 year.';
         MissingDateRangeFilterErr: Label 'VAT Date filter must be set.';
+        //NM - CUSTOMIZATION BEGINS
+        NMCountPurchNormVATBase: Decimal;
+        NMCountPurchNormVATAmount: Decimal;
+        NMCountPurchNormNonDeductibleVATBase: Decimal;
+        NMCountPurchNormNonDeductibleVATAmount: Decimal;
+        NMCountSaleNormVATBase: Decimal;
+        NMCountSaleNormVATAmount: Decimal;
+        NMCountSaleNormNonDeductibleVATBase: Decimal;
+        NMCountSaleNormNonDeductibleVATAmount: Decimal;
+        NMCountPurchRevVATBase: Decimal;
+        NMCountPurchRevVATAmount: Decimal;
+        NMCountPurchRevNonDeductibleVATBase: Decimal;
+        NMCountPurchRevNonDeductibleVATAmount: Decimal;
+        NMCountSaleRevVATBase: Decimal;
+        NMCountSaleRevVATAmount: Decimal;
+        NMCountSaleRevNonDeductibleVATBase: Decimal;
+        NMCountSaleRevNonDeductibleVATAmount: Decimal;
+    //NM - CUSTOMIZATION ENDS
 }
-
-
